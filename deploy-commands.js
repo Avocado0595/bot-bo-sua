@@ -6,8 +6,6 @@ const { Routes } = require('discord-api-types/v9');
 
 const commands = [
 	new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
-	new SlashCommandBuilder().setName('server').setDescription('Replies with server info!'),
-	new SlashCommandBuilder().setName('user').setDescription('Replies with user info!'),
     new SlashCommandBuilder().setName('g9').setDescription('Ngủ ngon nè! <3'),
 	new SlashCommandBuilder().setName('vatsua').setDescription('Vắt sữa bò!')
 ]

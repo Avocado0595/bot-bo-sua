@@ -4,6 +4,8 @@ const { Client, Intents, MessageEmbed } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const MAX_MILK_PER_DAY = 16;
+const COOL_DOWN_TIME = 60;
 
 const MilkTank = new Schema({
   milk: {type: Number , default:0},
@@ -12,17 +14,17 @@ const MilkTank = new Schema({
 
 const User = new Schema({
   userId: String,
-  userName: String,
+  userTagName: String,
   numberOfCow: {type: Number, default: 1},
   milkTank: [MilkTank],
-  lastTimeTakeMilk: Date
+  lastTimeTakeMilk: Date,
+  totalMilk: Number
 }, {timestamps: true});
-
 
 
 const connect = async()=>{
   try{
-      await mongoose.connect('mongodb://localhost:27017/dairycow');
+      await mongoose.connect(process.env.MONGODB);
       console.log("connect database successfully!");
   }
   catch(e){
@@ -43,6 +45,28 @@ const addUser = async(user)=>{
 const updateUser = async(id, updateUser)=>{
   await UserModel.findByIdAndUpdate({_id:id}, updateUser, {new: true});
 }
+
+const getTopNUser = async(n, client)=>{
+  const userList = await UserModel.find().sort({totalMilk: -1}).skip((n-1)*10).limit(10);
+  let statBoard = "";
+  for(let i =0; i < userList.length; i++){
+    const userTag = await client.users.fetch(userList[i].userId).catch(console.error);
+    statBoard+=`${(n-1)*10+i+1}. ${userTag.tag} - ${userList[i].totalMilk} lít sữa\n`;
+  }
+  return statBoard;
+}
+
+const getUserRank = async(userId)=>{
+  const userList = await UserModel.find().sort({totalMilk:-1});
+  let rank = userList.length;
+  for(let i=0; i<userList.length; i++){
+    if(userId === userList[i].userId){
+      rank = i+1;
+    }
+  }
+  return rank;
+}
+
 
 const getTotalMilk = async(user)=>{
   let total = 0;
@@ -106,14 +130,14 @@ client.on('messageCreate',(async message=>{
         if(user){//user tồn tại
           const diffTime = user.lastTimeTakeMilk - new Date();//thời gian cooldown
           const diffSecond = Math.abs(Math.ceil(diffTime / (1000)));//thời gian cooldown
-          if(diffSecond < 60){
+          if(diffSecond < COOL_DOWN_TIME){
             message.reply(`**${message.author.tag.split("#")[0]}** bạn vừa vắt sữa chưa đầy 1 phút @.@! 1 phút nữa vắt tiếp nhé :"> !`);  
           }
           else{
             const totalMilk = await getTotalMilk(user);
-            if(totalMilk < 16){
+            if(totalMilk < MAX_MILK_PER_DAY){
               message.reply(`**${message.author.tag.split("#")[0]}** vừa vắt được ${milk} lít sữa bò!`);  
-              const editUser = {numberOfCow: user.numberOfCow,userId: message.author.id, lastTimeTakeMilk: new Date(), 
+              const editUser = {totalMilk: user.totalMilk + milk,numberOfCow: user.numberOfCow,userId: message.author.id, lastTimeTakeMilk: new Date(), 
               milkTank: [...user.milkTank,{milk:milk, takingTime: new Date()}] };
               await updateUser(user._id, editUser);
             }
@@ -123,7 +147,7 @@ client.on('messageCreate',(async message=>{
           }
         }
         else{
-          const newUser = {userId: message.author.id, lastTimeTakeMilk: new Date(), milkTank: [{milk:milk, takingTime: new Date() }]};
+          const newUser = {userTagName: message.author.tag ,userId: message.author.id, lastTimeTakeMilk: new Date(), milkTank: [{milk:milk, takingTime: new Date() }], totalMilk: milk};
           await addUser(newUser);
           message.reply(`Lần đầu tiên, **${message.author.tag.split("#")[0]}** vừa vắt được ${milk} lít sữa bò!`);
         }
@@ -140,11 +164,27 @@ client.on('messageCreate',(async message=>{
         else{
           message.reply('Bạn chưa vắt sữa! Hãy **b!vatsua** để có sữa nhé :">');  
         }
+        break;
       }
-    }
 
-    if(command[1] == "thongke"){
-      message.reply("Tính năng này đang thêm =)))")
+      case "thongke":{
+        const top = await getTopNUser(1, client);
+        const user = await getUser(message.author.id);
+        const userRank = await getUserRank(message.author.id);
+        const statEmbed = new MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle('Bảng thống kê (toàn trái đất)')
+            .setURL(inviteLink)
+            .setAuthor({ name: 'Bot Bò Sữa', iconURL: avatarLink, url: inviteLink })
+            .setDescription(top)
+            .setThumbnail(avatarLink)
+            .addField(`Thứ hạng của bạn: ${userRank} - ${user.totalMilk} lít sữa`,'Hãy tiếp tục vắt sữa nhé :"> ')
+            .setTimestamp()
+            .setFooter('Bot được tạo ra bởi ThanhXuan', 'https://cdn.discordapp.com/avatars/526277128992325632/1b072787d8ef0a9252b15f0156e2ca86.png?size=1024');
+        message.channel.send({ embeds: [statEmbed] }); 
+      }
+
+
     }
   }
 }))
@@ -161,3 +201,4 @@ client.on('interactionCreate', async interaction => {
 });
 
 client.login(process.env.TOKEN);
+
