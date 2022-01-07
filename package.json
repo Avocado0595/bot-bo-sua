@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "lint": "npx eslint ./src  && npx prettier ./src",
+    "lint": "npx eslint ./src && npx prettier ./src",
     "lint-fix": "npx eslint --fix ./src && npx prettier --write ./src"
   },
   "keywords": [],
