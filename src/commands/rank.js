@@ -1,4 +1,8 @@
-import { getTopNUser, getUser, getUserRank } from '../controllers/userController.js';
+import {
+	getTopNUser,
+	getUser,
+	getUserRank,
+} from '../controllers/userController.js';
 import { statsEmbed } from '../customEmbed/cutomEmbed.js';
 
 const rank = async (message, client) => {

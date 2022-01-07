@@ -9,7 +9,7 @@ import status from './commands/status.js';
 
 import config from './config/config.js';
 const client = new Client({
-	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]
+	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
 dotenv.config();
@@ -18,38 +18,38 @@ connect();
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
-client.on('messageCreate', async message => {
+client.on('messageCreate', async (message) => {
 	if (message.content.indexOf(config.prefix) === 0) {
 		const command = message.content.split('!');
 		switch (command[1]) {
-		case 'help':{
-			message.channel.send({ embeds: [helpEmbed()] });
-			break;
-		}
+			case 'help': {
+				message.channel.send({ embeds: [helpEmbed()] });
+				break;
+			}
 
-		case 'vatsua':{
-			await milk(message);
-			break;
-		}
+			case 'vatsua': {
+				await milk(message);
+				break;
+			}
 
-		case 'xemkho':{
-			await status(message);
-			break;
-		}
+			case 'xemkho': {
+				await status(message);
+				break;
+			}
 
-		case 'thongke':{
-			await rank(message, client);
-			break;
-		}
+			case 'thongke': {
+				await rank(message, client);
+				break;
+			}
 
-		case 'anco':{
-			await feed(message);
-			break;
-		}
+			case 'anco': {
+				await feed(message);
+				break;
+			}
 		}
 	}
 });
-client.on('interactionCreate', async interaction => {
+client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isCommand()) return;
 
 	if (interaction.commandName === 'ping') {

@@ -5,8 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "lint": "npx eslint ./src && npx prettier ./src",
+    "lint-fix": "npx eslint --fix ./src && npx prettier --write ./src"
   },
   "keywords": [],
   "author": "",
@@ -16,9 +17,11 @@
     "discord-api-types": "^0.25.2",
     "discord.js": "^13.4.0",
     "dotenv": "^10.0.0",
-    "mongoose": "^6.1.4"
+    "mongoose": "^6.1.4",
+    "prettier": "^2.5.1"
   },
   "devDependencies": {
-    "eslint": "^8.6.0"
+    "eslint": "^8.6.0",
+    "eslint-config-prettier": "^8.3.0"
   }
 }
