@@ -22,11 +22,17 @@ export const getTopNUser = async (userId, n, client) => {
 	const userRank = await getUserRank(userId, sortedUserList);
 	const statRank = sortedUserList.splice(n-1,10);
 	let statBoard = '';
+
+
+	let fetchList = [];
 	for (let i = 0; i < statRank.length; i++) {
-		const userTag = await client.users
+		fetchList.push(client.users
 			.fetch(statRank[i].userId)
-			.catch(console.error);
-		statBoard += `${(n - 1) * 10 + i + 1}. ${userTag.tag} - ${
+			.catch(console.error))
+		}
+	const statList = await Promise.all(fetchList);
+	for(let i =0; i<statList.length; i++){
+		statBoard += `${(n - 1) * 10 + i + 1}. ${statList[i].tag} - ${
 			statRank[i].totalMilk
 		} lít sữa\n`;
 	}

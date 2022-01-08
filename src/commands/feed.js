@@ -13,9 +13,15 @@ const feed = async (message) => {
 			`Bạn vừa buff cho bò lên ${randNew}% sức mạnh :">\nHãy thường xuyên cho bò ăn nhé!`
 		);}
 		else{
+			if(user.cow.strength < 100)
 			message.reply(
 				`Bò đang nhai mà @.@ !\nChờ ${timeLeft} giây nữa rồi cho ăn tiếp nhé!`
-			);}
+			);
+			else
+			message.reply(
+				`Bò no rồi, không cần ăn nữa đâu!`
+			);
+		}
 		
 	} else {
 		message.reply('Bạn vừa vào trang trại, có thể b!vatsua ngay nhé !');
