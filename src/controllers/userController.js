@@ -10,7 +10,7 @@ export const addUser = async (user) => {
 	newUser.save();
 };
 
-export const updateUser = async (userId, id, updateUser) => {
+export const updateUser = async ( id, updateUser) => {
 	await UserModel.findByIdAndUpdate({ _id: id }, updateUser, { new: true });
 };
 
