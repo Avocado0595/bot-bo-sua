@@ -8,4 +8,5 @@ export default {
 	incStrengthMax: 6,
 	incStrengthMin: 4,
 	maxMilkPerDay: 16,
+	channelListen: '',
 };
