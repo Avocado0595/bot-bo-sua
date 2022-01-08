@@ -19,10 +19,10 @@ const milk = async (message) => {
 		const newStrength = await decStrength(user),
 			diffTime = user.lastTimeTakeMilk - new Date(),
 			diffSecond = Math.abs(Math.ceil(diffTime / 1000)),
-			timeLeft = config.coolDownTime - diffSecond;
+			timeLeft = config.coolDownMilk - diffSecond;
 
 		if (timeLeft > 0) {
-			const timeLeftMin = Math.round(timeLeft / 60),
+			const timeLeftMin = Math.floor(timeLeft / 60),
 				timeLeftSec = timeLeft % 60;
 			message.reply(
 				`**${

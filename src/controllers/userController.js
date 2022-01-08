@@ -10,42 +10,41 @@ export const addUser = async (user) => {
 	newUser.save();
 };
 
-export const updateUser = async (id, updateUser) => {
+export const updateUser = async (userId, id, updateUser) => {
 	await UserModel.findByIdAndUpdate({ _id: id }, updateUser, { new: true });
 };
 
-export const getTopNUser = async (n, client) => {
-	const userList = await UserModel.find()
-		.sort({ totalMilk: -1 })
-		.skip((n - 1) * 10)
-		.limit(10);
+export const getTopNUser = async (userId, n, client) => {
+	const sortedUserList = await UserModel.find()
+		.sort({ totalMilk: -1 });
+		// .skip((n - 1) * 10)
+		// .limit(10);
+	const userRank = await getUserRank(userId, sortedUserList);
+	const statRank = sortedUserList.splice(n-1,10);
 	let statBoard = '';
-	for (let i = 0; i < userList.length; i++) {
+	for (let i = 0; i < statRank.length; i++) {
 		const userTag = await client.users
-			.fetch(userList[i].userId)
+			.fetch(statRank[i].userId)
 			.catch(console.error);
 		statBoard += `${(n - 1) * 10 + i + 1}. ${userTag.tag} - ${
-			userList[i].totalMilk
+			statRank[i].totalMilk
 		} lít sữa\n`;
 	}
-	return statBoard;
+	return {statBoard, userRank};
 };
 
-export const getUserRank = async (userId) => {
-	const userList = await UserModel.find().sort({ totalMilk: -1 });
-	let rank = userList.length;
-	for (let i = 0; i < userList.length; i++) {
-		if (userId === userList[i].userId) {
-			rank = i + 1;
+export const getUserRank = async (userId, sortedUserList) => {
+	for (let i = 0; i < sortedUserList.length; i++) {
+		if (userId === sortedUserList[i].userId) {
+			return i + 1;
 		}
 	}
-	return rank;
+	return sortedUserList.length;
 };
 export const getTotalMilk = async (user) => {
 	let total = 0;
 	if (user) {
 		const { milkTank } = user;
-
 		milkTank.forEach((element) => {
 			total += element.milk;
 		});
@@ -86,7 +85,7 @@ export const decStrength = async (user) => {
 
 export const incStrength = async (user) => {
 	const randNew =
-			Math.round((user.cow.strength + (Math.random() * 2 + 4)) * 100) /
+			Math.round((user.cow.strength + (Math.random() * (config.incStrengthMax-config.incStrengthMin) + config.incStrengthMin)) * 100) /
 			100,
 		newStrength = randNew <= 100 ? randNew : 100,
 		updatedCow = {

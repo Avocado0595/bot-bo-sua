@@ -19,7 +19,7 @@ export const helpEmbed = () =>
 		.addField('b!xemkho', 'Xem kho bạn có gì nào?')
 		.addField('b!thongke', 'Xem bảng thống kê')
 		.addField('b!anco', 'Cho bò ăn để có sữa nhé')
-		.addField('Gihub', 'https://github.com/Avocado0595/bot-bo-sua')
+		.addField('Github', 'https://github.com/Avocado0595/bot-bo-sua')
 		.setURL('https://github.com/Avocado0595/bot-bo-sua')
 		.setTimestamp()
 		.setFooter(
@@ -37,7 +37,7 @@ export const statsEmbed = (user, userRank, top) =>
 		.setThumbnail(avatarLink)
 		.addField(
 			`Thứ hạng của bạn: ${userRank} - ${
-				user ? user.totalMilk : 0
+				user ? Math.round(user.totalMilk*100)/100 : 0
 			} lít sữa`,
 			'Hãy tiếp tục vắt sữa nhé :"> '
 		)
