@@ -8,6 +8,8 @@ import rank from './commands/rank.js';
 import status from './commands/status.js';
 
 import config from './config/config.js';
+import { isVaildChannel } from './validator.js';
+
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
@@ -20,29 +22,55 @@ client.on('ready', () => {
 });
 client.on('messageCreate', async (message) => {
 	if (message.content.indexOf(config.prefix) === 0) {
+		
 		const command = message.content.split('!');
 		switch (command[1]) {
 			case 'help': {
+				if ( !isVaildChannel(message) ) break;
+				
 				message.channel.send({ embeds: [helpEmbed()] });
 				break;
 			}
 
+			case 'motrangtrai': {
+				if ( config.channelListen !== '' ) {
+					const oldChannel = config.channelListen; 			
+					message.client.channels.fetch(message.channelId)
+					.then((channel) => {
+						client.channels.cache.get(oldChannel).send(`Trang trại bò đã được di dời đến ${channel.toString()}`);
+					})
+					.catch(console.error);
+				}
+				config.channelListen = message.channelId;
+
+				message.channel.send(`Chủ trang trại đã biến ${(message.channel.isThread() ? 'thread' : 'channel')} này thành trại bò`);
+				break;
+			}
+
 			case 'vatsua': {
+				if ( !isVaildChannel(message) ) break;
+
 				await milk(message);
 				break;
 			}
 
 			case 'xemkho': {
+				if ( !isVaildChannel(message) ) break;
+
 				await status(message);
 				break;
 			}
 
 			case 'thongke': {
+				if ( !isVaildChannel(message) ) break;
+
 				await rank(message, client);
 				break;
 			}
 
 			case 'anco': {
+				if ( !isVaildChannel(message) ) break;
+
 				await feed(message);
 				break;
 			}

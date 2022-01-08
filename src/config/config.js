@@ -5,4 +5,5 @@ export default {
 	minMilk: 2,
 	decStrengthVal: 0.59,
 	maxMilkPerDay: 16,
+	channelListen: '',
 };
