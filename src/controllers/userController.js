@@ -1,5 +1,5 @@
 import { UserModel } from '../models/userModel.js';
-import config from '../config/config.js';
+import settings from '../settings/settings.js';
 export const getUser = async (userId) => {
 	const result = await UserModel.findOne({ userId });
 	return result;
@@ -28,7 +28,7 @@ export const getTopNUser = async (userId, n, client) => {
 	for (let i = 0; i < statRank.length; i++) {
 		fetchList.push(client.users
 			.fetch(statRank[i].userId)
-			.catch(console.error))
+			.catch(console.error));
 		}
 	const statList = await Promise.all(fetchList);
 	for(let i =0; i<statList.length; i++){
@@ -79,7 +79,7 @@ export const getTotalMilkByDay = async (user, date) => {
 export const decStrength = async (user) => {
 	const diffTime = new Date() - user.cow.lastFeedingTime,
 		diffHour = Math.abs(Math.ceil(diffTime / 1000)) / 3600,
-		strangeDec = user.cow.strength - diffHour * config.decStrengthVal,
+		strangeDec = user.cow.strength - diffHour * settings.decStrengthVal,
 		newStrength = strangeDec >= 0 ? Math.round(strangeDec * 100) / 100 : 0;
 	await UserModel.findByIdAndUpdate(
 		user._id,
@@ -91,7 +91,7 @@ export const decStrength = async (user) => {
 
 export const incStrength = async (user) => {
 	const randNew =
-			Math.round((user.cow.strength + (Math.random() * (config.incStrengthMax-config.incStrengthMin) + config.incStrengthMin)) * 100) /
+			Math.round((user.cow.strength + (Math.random() * (settings.incStrengthMax-settings.incStrengthMin) + settings.incStrengthMin)) * 100) /
 			100,
 		newStrength = randNew <= 100 ? randNew : 100,
 		updatedCow = {

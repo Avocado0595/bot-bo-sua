@@ -1,4 +1,4 @@
-import config from '../config/config.js';
+import settings from '../settings/settings.js';
 import {
 	decStrength,
 	getUser,
@@ -11,15 +11,15 @@ const milk = async (message) => {
 	const user = await getUser(message.author.id),
 		milk =
 			Math.round(
-				(Math.random() * (config.maxMilk - config.minMilk) +
-					config.minMilk) *
+				(Math.random() * (settings.maxMilk - settings.minMilk) +
+				settings.minMilk) *
 					100
 			) / 100;
 	if (user) {
 		const newStrength = await decStrength(user),
 			diffTime = user.lastTimeTakeMilk - new Date(),
 			diffSecond = Math.abs(Math.ceil(diffTime / 1000)),
-			timeLeft = config.coolDownMilk - diffSecond;
+			timeLeft = settings.coolDownMilk - diffSecond;
 
 		if (timeLeft > 0) {
 			const timeLeftMin = Math.floor(timeLeft / 60),
@@ -35,7 +35,7 @@ const milk = async (message) => {
 			);
 		else {
 			const totalMilk = await getTotalMilkByDay(user, new Date());
-			if (totalMilk <= config.maxMilkPerDay) {
+			if (totalMilk <= settings.maxMilkPerDay) {
 				message.reply(
 					`**${
 						message.author.tag.split('#')[0]

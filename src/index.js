@@ -7,7 +7,7 @@ import feed from './commands/feed.js';
 import rank from './commands/rank.js';
 import status from './commands/status.js';
 
-import config from './config/config.js';
+import settings from './settings/settings.js';
 import { isVaildChannel } from './validator.js';
 
 const client = new Client({
@@ -21,7 +21,7 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 client.on('messageCreate', async (message) => {
-	if (message.content.indexOf(config.prefix) === 0) {
+	if (message.content.indexOf(settings.prefix) === 0) {
 		
 		const command = message.content.split('!');
 		switch (command[1]) {
@@ -33,15 +33,15 @@ client.on('messageCreate', async (message) => {
 			}
 
 			case 'motrangtrai': {
-				if ( config.channelListen !== '' ) {
-					const oldChannel = config.channelListen; 			
+				if ( settings.channelListen !== '' ) {
+					const oldChannel = settings.channelListen; 			
 					message.client.channels.fetch(message.channelId)
 					.then((channel) => {
 						client.channels.cache.get(oldChannel).send(`Trang trại bò đã được di dời đến ${channel.toString()}`);
 					})
 					.catch(console.error);
 				}
-				config.channelListen = message.channelId;
+				settings.channelListen = message.channelId;
 
 				message.channel.send(`Chủ trang trại đã biến ${(message.channel.isThread() ? 'thread' : 'channel')} này thành trại bò`);
 				break;

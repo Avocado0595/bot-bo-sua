@@ -1,12 +1,12 @@
 import { incStrength, getUser } from '../controllers/userController.js';
-import config from '../config/config.js';
+import settings from '../settings/settings.js';
 
 const feed = async (message) => {
 	const user = await getUser(message.author.id);
 	if (user) {
 		const diffTime = user.cow.lastFeedingTime - new Date(),
 			diffSecond = Math.abs(Math.ceil(diffTime / 1000)),
-			timeLeft = config.coolDownFeeding - diffSecond;
+			timeLeft = settings.coolDownFeeding - diffSecond;
 		if(timeLeft<=0){
 		const randNew = await incStrength(user);
 		message.reply(
@@ -19,7 +19,7 @@ const feed = async (message) => {
 			);
 			else
 			message.reply(
-				`Bò no rồi, không cần ăn nữa đâu!`
+				'Bò no rồi, không cần ăn nữa đâu!'
 			);
 		}
 		
