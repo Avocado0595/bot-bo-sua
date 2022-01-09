@@ -7,5 +7,5 @@ export default {
 	decStrengthVal: 0.59,
 	incStrengthMax: 6,
 	incStrengthMin: 4,
-	maxMilkPerDay: 16,
+	maxMilkPerDay: 16
 };

@@ -2,12 +2,12 @@ import dotenv from 'dotenv';
 import { Client, Intents } from 'discord.js';
 import connect from './database/database.js';
 import milk from './commands/milk.js';
-import { helpEmbed } from './customEmbed/cutomEmbed.js';
 import feed from './commands/feed.js';
+import { helpEmbed } from './customEmbed/cutomEmbed.js';
 import rank from './commands/rank.js';
 import status from './commands/status.js';
-
 import config from './config/config.js';
+
 const client = new Client({
 	intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
 });
@@ -20,6 +20,7 @@ client.on('ready', () => {
 });
 client.on('messageCreate', async (message) => {
 	if (message.content.indexOf(config.prefix) === 0) {
+		
 		const command = message.content.split('!');
 		if (command[1].indexOf('thongke') !== -1) {
 			const pagePart = command[1].split(' ')[1];
@@ -47,8 +48,7 @@ client.on('messageCreate', async (message) => {
 				break;
 			}
 		}
-	}
-});
+}});
 client.on('interactionCreate', async (interaction) => {
 	if (!interaction.isCommand()) return;
 
