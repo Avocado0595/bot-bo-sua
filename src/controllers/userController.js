@@ -1,4 +1,6 @@
 import { UserModel } from '../models/userModel.js';
+import randomRange from '../helpers/randomRange.js';
+import roundDouble from '../helpers/roundDouble.js';
 import config from '../config/config.js';
 export const getUser = async (userId) => {
 	const result = await UserModel.findOne({ userId });
@@ -10,33 +12,31 @@ export const addUser = async (user) => {
 	newUser.save();
 };
 
-export const updateUser = async ( id, updateUser) => {
+export const updateUser = async (id, updateUser) => {
 	await UserModel.findByIdAndUpdate({ _id: id }, updateUser, { new: true });
 };
 
-export const getTopNUser = async (userId, n, client) => {
-	const sortedUserList = await UserModel.find()
-		.sort({ totalMilk: -1 });
-		// .skip((n - 1) * 10)
-		// .limit(10);
+export const getTopNUser = async (userId, page, client) => {
+	const userPerPage = 5;
+	const sortedUserList = await UserModel.find().sort({ totalMilk: -1 });
+	const totalPage = Math.round(sortedUserList.length / userPerPage);
+	const n = page > totalPage ? totalPage : page;
 	const userRank = await getUserRank(userId, sortedUserList);
-	const statRank = sortedUserList.splice(n-1,10);
+	const statRank = sortedUserList.splice(n - 1, userPerPage);
 	let statBoard = '';
-
-
 	let fetchList = [];
 	for (let i = 0; i < statRank.length; i++) {
-		fetchList.push(client.users
-			.fetch(statRank[i].userId)
-			.catch(console.error))
-		}
+		fetchList.push(
+			client.users.fetch(statRank[i].userId).catch(console.error)
+		);
+	}
 	const statList = await Promise.all(fetchList);
-	for(let i =0; i<statList.length; i++){
-		statBoard += `${(n - 1) * 10 + i + 1}. ${statList[i].tag} - ${
+	for (let i = 0; i < statList.length; i++) {
+		statBoard += `${(n - 1) * userPerPage + i + 1}. ${statList[i].tag} - ${
 			statRank[i].totalMilk
 		} lít sữa\n`;
 	}
-	return {statBoard, userRank};
+	return { statBoard, userRank, totalPage };
 };
 
 export const getUserRank = async (userId, sortedUserList) => {
@@ -55,7 +55,7 @@ export const getTotalMilk = async (user) => {
 			total += element.milk;
 		});
 	}
-	return Math.round(total * 100) / 100;
+	return roundDouble(total);
 };
 export const getTotalMilkByDay = async (user, date) => {
 	let total = 0;
@@ -73,26 +73,27 @@ export const getTotalMilkByDay = async (user, date) => {
 				total += element.milk;
 		});
 	}
-	return Math.round(total * 100) / 100;
+	return roundDouble(total);
 };
 
 export const decStrength = async (user) => {
 	const diffTime = new Date() - user.cow.lastFeedingTime,
 		diffHour = Math.abs(Math.ceil(diffTime / 1000)) / 3600,
 		strangeDec = user.cow.strength - diffHour * config.decStrengthVal,
-		newStrength = strangeDec >= 0 ? Math.round(strangeDec * 100) / 100 : 0;
+		newStrength = strangeDec >= 0 ? roundDouble(strangeDec) : 0;
 	await UserModel.findByIdAndUpdate(
 		user._id,
 		{ $set: { 'cow.strength': newStrength } },
 		{ new: true }
 	);
-	return newStrength;
+	return roundDouble(newStrength);
 };
 
 export const incStrength = async (user) => {
-	const randNew =
-			Math.round((user.cow.strength + (Math.random() * (config.incStrengthMax-config.incStrengthMin) + config.incStrengthMin)) * 100) /
-			100,
+	const randNew = roundDouble(
+			user.cow.strength +
+				randomRange(config.incStrengthMax, config.incStrengthMin)
+		),
 		newStrength = randNew <= 100 ? randNew : 100,
 		updatedCow = {
 			...user.cow,
@@ -109,5 +110,5 @@ export const incStrength = async (user) => {
 		},
 		{ new: true }
 	);
-	return newStrength;
+	return roundDouble(newStrength);
 };

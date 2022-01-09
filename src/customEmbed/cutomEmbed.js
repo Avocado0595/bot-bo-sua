@@ -1,4 +1,5 @@
 import { MessageEmbed } from 'discord.js';
+
 const avatarLink =
 		'https://cdn.dribbble.com/users/1275/screenshots/2154492/media/7582ab673004df06fbac8dbef7211ad0.png',
 	inviteLink =
@@ -27,7 +28,7 @@ export const helpEmbed = () =>
 			'https://cdn.discordapp.com/avatars/526277128992325632/523f5d88ae0c0324c27c28d1fdef27d2.png?size=1024'
 		);
 
-export const statsEmbed = (user, userRank, top) =>
+export const statsEmbed = (user, userRank, top, page, totalPage) =>
 	new MessageEmbed()
 		.setColor('#0099ff')
 		.setTitle('Bảng thống kê (toàn trái đất)')
@@ -37,9 +38,9 @@ export const statsEmbed = (user, userRank, top) =>
 		.setThumbnail(avatarLink)
 		.addField(
 			`Thứ hạng của bạn: ${userRank} - ${
-				user ? Math.round(user.totalMilk*100)/100 : 0
+				user ? user.totalMilk : 0
 			} lít sữa`,
-			'Hãy tiếp tục vắt sữa nhé :"> '
+			`Hãy tiếp tục vắt sữa nhé :"> \nTrang: ${page}/${totalPage} - b!thongke ${'số trang'}`
 		)
 		.setTimestamp()
 		.setFooter(

@@ -1,4 +1,6 @@
 import config from '../config/config.js';
+import roundDouble from '../helpers/roundDouble.js';
+import randomRange from '../helpers/randomRange.js';
 import {
 	decStrength,
 	getUser,
@@ -9,12 +11,7 @@ import {
 
 const milk = async (message) => {
 	const user = await getUser(message.author.id),
-		milk =
-			Math.round(
-				(Math.random() * (config.maxMilk - config.minMilk) +
-					config.minMilk) *
-					100
-			) / 100;
+		milk = roundDouble(randomRange(config.maxMilk, config.minMilk));
 	if (user) {
 		const newStrength = await decStrength(user),
 			diffTime = user.lastTimeTakeMilk - new Date(),
@@ -42,7 +39,7 @@ const milk = async (message) => {
 					}** vừa vắt được ${milk} lít sữa bò!`
 				);
 				const editUser = {
-					totalMilk: user.totalMilk + milk,
+					totalMilk: roundDouble(user.totalMilk + milk),
 					numberOfCow: user.numberOfCow,
 					userId: message.author.id,
 					lastTimeTakeMilk: new Date(),

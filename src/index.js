@@ -21,6 +21,11 @@ client.on('ready', () => {
 client.on('messageCreate', async (message) => {
 	if (message.content.indexOf(config.prefix) === 0) {
 		const command = message.content.split('!');
+		if (command[1].indexOf('thongke') !== -1) {
+			const pagePart = command[1].split(' ')[1];
+			const page = Math.abs(Number.parseInt(pagePart)) || 1;
+			await rank(message, client, page);
+		}
 		switch (command[1]) {
 			case 'help': {
 				message.channel.send({ embeds: [helpEmbed()] });
@@ -34,11 +39,6 @@ client.on('messageCreate', async (message) => {
 
 			case 'xemkho': {
 				await status(message);
-				break;
-			}
-
-			case 'thongke': {
-				await rank(message, client);
 				break;
 			}
 
