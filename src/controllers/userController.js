@@ -17,12 +17,12 @@ export const updateUser = async (id, updateUser) => {
 };
 
 export const getTopNUser = async (userId, page, client) => {
-	const userPerPage = 5;
+	const userPerPage = 10;
 	const sortedUserList = await UserModel.find().sort({ totalMilk: -1 });
 	const totalPage = Math.round(sortedUserList.length / userPerPage);
 	const n = page > totalPage ? totalPage : page;
 	const userRank = await getUserRank(userId, sortedUserList);
-	const statRank = sortedUserList.splice(n - 1, userPerPage);
+	const statRank = sortedUserList.slice((n - 1)*userPerPage,n*userPerPage);
 	let statBoard = '';
 	let fetchList = [];
 	for (let i = 0; i < statRank.length; i++) {
