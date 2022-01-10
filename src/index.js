@@ -19,9 +19,10 @@ client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 client.on('messageCreate', async (message) => {
-	if (message.content.indexOf(config.prefix) === 0) {
+	const handleMessage = message.content.toLowerCase();
+	if (handleMessage.indexOf(config.prefix) === 0) {
 		
-		const command = message.content.split('!');
+		const command = handleMessage.split('!');
 		if (command[1].indexOf('thongke') !== -1) {
 			const pagePart = command[1].split(' ')[1];
 			const page = Math.abs(Number.parseInt(pagePart)) || 1;
