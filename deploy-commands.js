@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
@@ -6,7 +7,7 @@ const { Routes } = require('discord-api-types/v9');
 
 const commands = [
 	new SlashCommandBuilder().setName('ping').setDescription('Replies with pong!'),
-    new SlashCommandBuilder().setName('g9').setDescription('Ngủ ngon nè! <3'),
+	new SlashCommandBuilder().setName('g9').setDescription('Ngủ ngon nè! <3'),
 	new SlashCommandBuilder().setName('vatsua').setDescription('Vắt sữa bò!')
 ]
 	.map(command => command.toJSON());
